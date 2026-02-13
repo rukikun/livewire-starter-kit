@@ -10,7 +10,10 @@ class DocumentController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Document::with('category');
+        $query = Document::with('category', 'month')
+            ->orderBy('document_year', 'desc')
+            ->orderBy('document_month_id', 'desc')
+            ->orderBy('created_at', 'desc');
 
         if ($request->has('category_id')) {
             $query->where('category_id', $request->category_id);
@@ -34,6 +37,8 @@ class DocumentController extends Controller
             'category_id' => 'required|exists:categories,id',
             'document_name' => 'required|string|max:255',
             'url' => 'required|url',
+            'document_year' => 'nullable|integer|min:2000|max:2100',
+            'document_month_id' => 'nullable|exists:months,id',
             'is_admin' => 'boolean'
         ]);
 
@@ -44,10 +49,12 @@ class DocumentController extends Controller
             'category_name' => $category->category_name,
             'document_name' => $request->document_name,
             'url' => $request->url,
+            'document_year' => $request->document_year,
+            'document_month_id' => $request->document_month_id,
             'is_admin' => $request->is_admin ?? false
         ]);
 
-        return response()->json($document->load('category'), 201);
+        return response()->json($document->load('category', 'month'), 201);
     }
 
     public function show(Document $document)
@@ -60,7 +67,9 @@ class DocumentController extends Controller
         $request->validate([
             'category_id' => 'sometimes|required|exists:categories,id',
             'document_name' => 'sometimes|required|string|max:255',
-            'url' => 'sometimes|required|url'
+            'url' => 'sometimes|required|url',
+            'document_year' => 'nullable|integer|min:2000|max:2100',
+            'document_month_id' => 'nullable|exists:months,id'
         ]);
 
         if ($request->has('category_id')) {
@@ -70,7 +79,7 @@ class DocumentController extends Controller
 
         $document->update($request->all());
 
-        return response()->json($document->load('category'));
+        return response()->json($document->load('category', 'month'));
     }
 
     public function destroy(Document $document)

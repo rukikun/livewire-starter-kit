@@ -254,6 +254,110 @@
             background: rgba(0, 0, 0, 0.7);
         }
         
+        /* Dark mode modal content styling */
+        .dark .bg-white {
+            background-color: #1a202c !important;
+        }
+        
+        .dark .text-gray-800 {
+            color: #e2e8f0 !important;
+        }
+        
+        .dark .text-gray-700 {
+            color: #cbd5e0 !important;
+        }
+        
+        .dark .text-gray-600 {
+            color: #a0aec0 !important;
+        }
+        
+        .dark .border-gray-300 {
+            border-color: #4a5568 !important;
+        }
+        
+        .dark .bg-gray-50 {
+            background-color: #2d3748 !important;
+        }
+        
+        .dark .bg-red-100 {
+            background-color: #742a2a !important;
+        }
+        
+        .dark .text-red-600 {
+            color: #fc8181 !important;
+        }
+        
+        /* Dark mode cancel button styling */
+        .dark .bg-gray-100 {
+            background-color: #2d3748 !important;
+        }
+        
+        .dark .text-gray-700 {
+            color: #ffffff !important;
+        }
+        
+        /* Dark mode cancel button specific styling */
+        .dark .cancel-button-text {
+            color: #000000 !important;
+        }
+        
+        /* Ensure dropdowns are not clipped */
+        .category-dropdown {
+            pointer-events: auto !important;
+        }
+        
+        .sidebar {
+            overflow: visible !important;
+        }
+        
+        /* Hamburger menu animation */
+        .hamburger-line {
+            transition: all 0.3s ease;
+            transform-origin: center;
+        }
+        
+        .hamburger.active .hamburger-line:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        
+        .hamburger.active .hamburger-line:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .hamburger.active .hamburger-line:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+        
+        /* Sidebar animation */
+        .sidebar {
+            transition: transform 0.3s ease, width 0.3s ease, opacity 0.3s ease;
+            position: relative;
+            flex-shrink: 0;
+        }
+        
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+            width: 0;
+            opacity: 0;
+        }
+        
+        /* Main content adjustment */
+        .main-content {
+            transition: margin-left 0.3s ease, width 0.3s ease;
+            width: 100%; /* Default to full width */
+        }
+        
+        .main-content.sidebar-collapsed {
+            margin-left: 0;
+            width: 100%;
+        }
+        
+        /* Ensure dropdowns appear above everything */
+        .category-dropdown {
+            position: fixed !important;
+            z-index: 99999 !important;
+        }
+        
         @keyframes modalFadeIn {
             from {
                 opacity: 0;
@@ -271,8 +375,20 @@
     <header class="sidebar-gradient shadow-lg border-b-4 border-blue-700">
         <div class="px-6 py-4">
             <div class="flex items-center justify-between">
-                <!-- Left section: Logos and Title -->
+                <!-- Left section: Hamburger Menu and Logos -->
                 <div class="flex items-center space-x-4">
+                    <!-- Hamburger Menu Button -->
+                    <button @click="toggleSidebar" 
+                            class="text-white hover:text-blue-200 transition-colors p-2 rounded-lg hover:bg-blue-700 hamburger"
+                            :class="{ 'active': !sidebarOpen }"
+                            title="Toggle Sidebar">
+                        <div class="w-6 h-5 flex flex-col justify-center space-y-1">
+                            <div class="hamburger-line w-full h-0.5 bg-white"></div>
+                            <div class="hamburger-line w-full h-0.5 bg-white"></div>
+                            <div class="hamburger-line w-full h-0.5 bg-white"></div>
+                        </div>
+                    </button>
+                    
                     <!-- Logo 1 - Philippine Statistics Authority -->
                     <div class="w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center p-1 logo-container">
                         <img src="{{ asset('images/Philippine-Statistics-Authority-PSA-logo.png') }}" 
@@ -297,7 +413,7 @@
                     <button @click="toggleDarkMode()" 
                             class="text-white hover:text-blue-200 transition-colors p-2 rounded-lg hover:bg-blue-700"
                             title="Toggle Dark Mode">
-                        <i :class="document.body.classList.contains('dark') ? 'fas fa-sun' : 'fas fa-moon'" class="text-xl"></i>
+                        <i :class="darkMode ? 'fas fa-sun' : 'fas fa-moon'" class="text-xl"></i>
                     </button>
 
                     <!-- Logout Button -->
@@ -314,9 +430,11 @@
         </div>
     </header>
 
-    <div class="flex h-screen" style="height: calc(100vh - 80px);">
+    <div class="flex h-screen" :class="darkMode ? 'bg-gray-900' : 'bg-gray-100'" style="height: calc(100vh - 80px);">
         <!-- Enhanced Sidebar -->
-        <aside class="w-80 sidebar-gradient shadow-2xl relative z-40" style="overflow: visible;">
+        <aside class="sidebar w-80 sidebar-gradient shadow-2xl z-40"
+               :class="{ 'collapsed': !sidebarOpen }"
+               style="overflow: auto;">
             <div class="p-6 text-white">
                 <!-- Header -->
                 <div class="mb-8">
@@ -406,8 +524,8 @@
                                              x-transition:leave="transition ease-in duration-150"
                                              x-transition:leave-start="opacity-100 scale-100 transform translate-x-0"
                                              x-transition:leave-end="opacity-0 scale-95 transform -translate-x-2"
-                                             class="absolute left-full top-0 ml-1 w-52 dropdown-menu rounded-lg shadow-xl border border-gray-200"
-                                             style="z-index: 9999; position: absolute;">
+                                             class="category-dropdown absolute left-full top-0 ml-1 w-52 dropdown-menu rounded-lg shadow-xl border border-gray-200"
+                                             style="z-index: 9999999; position: fixed; overflow: visible;">
                                             <button @click.stop="editCategory(category)" 
                                                     class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 flex items-center transition-all duration-200 group">
                                                 <i class="fas fa-edit mr-3 text-blue-500 group-hover:scale-110 transition-transform"></i>
@@ -439,23 +557,135 @@
                             </div>
         </aside>
 
+        <!-- Loading Overlay -->
+        <div x-show="loading || searchLoading || filterLoading" 
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40">
+            <!-- Dark mode covering div -->
+            <div x-show="darkMode" 
+                 class="absolute inset-0 bg-gray-800" style="z-index: -1;"></div>
+            <div :class="darkMode ? 'bg-gray-800' : 'bg-white'" class="rounded-lg p-6 flex flex-col items-center">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mb-4"></div>
+                <p :class="darkMode ? 'text-gray-200' : 'text-gray-700'" class="font-medium" x-text="searchLoading ? 'Searching...' : (filterLoading ? 'Applying filters...' : 'Applying filters...')"></p>
+            </div>
+        </div>
+
         <!-- Main Content -->
-        <main class="flex-1 p-6">
+        <main class="flex-1 p-6 main-content" :class="{ 'sidebar-collapsed': !sidebarOpen }">
             <div class="glass-effect rounded-xl shadow-xl">
-                <!-- Header with Search and Add Button -->
+                <!-- Filters Section -->
                 <div class="p-6 border-b border-gray-200">
-                    <div class="flex justify-between items-center">
-                        <div class="flex-1 max-w-lg">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800 flex items-center">
+                            <i class="fas fa-filter mr-2 text-indigo-600"></i>
+                            Filters
+                        </h3>
+                        <button @click="clearFilters" 
+                                class="text-sm text-gray-600 hover:text-gray-800 transition-colors">
+                            <i class="fas fa-times mr-1"></i>Clear All
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <!-- Category Filter -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                            <select x-model="filters.category_id" 
+                                    @change="handleFilterChange"
+                                    :disabled="loading || filterLoading"
+                                    :class="{ 'opacity-50 cursor-not-allowed': loading || filterLoading }"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="">All Categories</option>
+                                @foreach($categories as $category)
+                                <option value="{{ $category->id }}">{{ $category->category_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        
+                        <!-- Year Filter -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Year</label>
+                            <select x-model="filters.year" 
+                                    @change="handleFilterChange"
+                                    :disabled="loading || filterLoading"
+                                    :class="{ 'opacity-50 cursor-not-allowed': loading || filterLoading }"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="">All Years</option>
+                                @foreach($availableYears as $year)
+                                <option value="{{ $year }}">{{ $year }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        
+                        <!-- Month Filter -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Month</label>
+                            <select x-model="filters.month" 
+                                    @change="handleFilterChange"
+                                    :disabled="loading || filterLoading"
+                                    :class="{ 'opacity-50 cursor-not-allowed': loading || filterLoading }"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="">All Months</option>
+                                <option value="1">January</option>
+                                <option value="2">February</option>
+                                <option value="3">March</option>
+                                <option value="4">April</option>
+                                <option value="5">May</option>
+                                <option value="6">June</option>
+                                <option value="7">July</option>
+                                <option value="8">August</option>
+                                <option value="9">September</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Search Filter -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
                             <div class="relative">
                                 <input type="text" 
-                                       x-model="searchTerm" 
-                                       placeholder="Search documents by name or category..." 
-                                       class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                <i class="fas fa-search absolute left-3 top-4 text-gray-400"></i>
+                                       x-model="filters.search" 
+                                       @input.debounce.300ms="handleSearchInput"
+                                       @keydown.enter="handleSearchEnter"
+                                       :disabled="loading || filterLoading || searchLoading"
+                                       :class="{ 'opacity-50 cursor-not-allowed': loading || filterLoading || searchLoading }"
+                                       placeholder="Search documents..." 
+                                       class="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
                             </div>
                         </div>
+                    </div>
+                    
+                    <!-- Active Filters Display -->
+                    <div x-show="hasActiveFilters()" class="mt-4 flex flex-wrap gap-2">
+                        <template x-for="(value, key) in getActiveFilters()" :key="key">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                                <span x-text="getFilterLabel(key)"></span>: <span x-text="getFilterValue(key, value)" class="ml-1 font-semibold"></span>
+                                <button @click="removeFilter(key)" class="ml-2 hover:text-indigo-600">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </span>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Header with Add Button -->
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex justify-between items-center">
+                        <div class="text-sm text-gray-600">
+                            Showing <span x-text="filteredDocuments.length" class="font-semibold"></span> 
+                            <span x-show="hasActiveFilters()">filtered</span> 
+                            of <span x-text="totalDocumentsCount" class="font-semibold"></span> documents
+                        </div>
                         <button @click="showAddDocument = true" 
-                                class="ml-4 btn-primary text-white px-6 py-3 rounded-lg font-semibold">
+                                class="btn-primary text-white px-6 py-3 rounded-lg font-semibold">
                             <i class="fas fa-plus mr-2"></i>Add Document
                         </button>
                     </div>
@@ -485,6 +715,7 @@
                                     <th class="text-left py-3 px-4 font-semibold text-gray-700">Year</th>
                                     <th class="text-left py-3 px-4 font-semibold text-gray-700">Link</th>
                                     <th class="text-left py-3 px-4 font-semibold text-gray-700">Actions</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Month</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -504,7 +735,9 @@
                                                   :style="`background-color: ${getCategoryColor(document.category_name)}20; color: ${getCategoryColor(document.category_name)}`"
                                                   x-text="document.category_name"></span>
                                         </td>
-                                        <td class="py-4 px-4 text-gray-600">2024</td>
+                                        <td class="py-4 px-4 text-gray-600">
+                                            <span x-text="document.document_year || 'N/A'"></span>
+                                        </td>
                                         <td class="py-4 px-4">
                                             <a :href="document.url" 
                                                target="_blank" 
@@ -526,6 +759,9 @@
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </div>
+                                        </td>
+                                        <td class="py-4 px-4 text-gray-600">
+                                            <span x-text="getMonthNameById(document.document_month_id)"></span>
                                         </td>
                                     </tr>
                                 </template>
@@ -552,7 +788,23 @@
          x-transition:leave-start="opacity-100 transform translate-y-0 scale-100"
          x-transition:leave-end="opacity-0 transform -translate-y-4 scale-95"
          class="fixed inset-0 modal-backdrop flex items-center justify-center z-50" x-cloak>
-        <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md mx-4">
+        <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md mx-4 relative">
+            <!-- Loading Overlay -->
+            <div x-show="addDocumentLoading" 
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 class="absolute inset-0 bg-opacity-95 rounded-xl flex items-center justify-center z-10"
+                 :class="darkMode ? 'bg-gray-800' : 'bg-white'">
+                <div class="flex flex-col items-center">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mb-4"></div>
+                    <p :class="darkMode ? 'text-gray-200' : 'text-gray-700'" class="font-medium">Adding document...</p>
+                </div>
+            </div>
+            
             <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
                 <i class="fas fa-file-plus mr-3 text-indigo-600"></i>
                 Add New Document
@@ -575,6 +827,25 @@
                            placeholder="Enter document name" 
                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Year</label>
+                        <input type="number" 
+                               x-model="newDocument.document_year" 
+                               placeholder="e.g., 2024" 
+                               min="2000" 
+                               max="2100"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Month</label>
+                        <input type="text" 
+                               x-model="newDocument.document_month" 
+                               @input="newDocument.document_month_id = getMonthIdByName(newDocument.document_month)"
+                               placeholder="e.g., January or 1-12" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">URL</label>
                     <input type="url" 
@@ -585,7 +856,7 @@
             </div>
             <div class="flex justify-end space-x-3 mt-6">
                 <button @click="showAddDocument = false; resetNewDocument()" 
-                        class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+                        class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors cancel-button-text">
                     Cancel
                 </button>
                 <button @click="addDocument" 
@@ -634,7 +905,7 @@
             </div>
             <div class="flex justify-end space-x-3 mt-6">
                 <button @click="showEditCategory = false" 
-                        class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+                        class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors cancel-button-text">
                     Cancel
                 </button>
                 <button @click="updateCategory" 
@@ -668,7 +939,7 @@
                 </p>
                 <div class="flex justify-center space-x-3">
                     <button @click="cancelDelete()" 
-                            class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium">
+                            class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium cancel-button-text">
                         Cancel
                     </button>
                     <button @click="deleteCategoryConfirmed()" 
@@ -712,6 +983,25 @@
                            placeholder="Enter document name" 
                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Year</label>
+                        <input type="number" 
+                               x-model="editingDocument.document_year" 
+                               placeholder="e.g., 2024" 
+                               min="2000" 
+                               max="2100"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Month</label>
+                        <input type="text" 
+                               x-model="editingDocument.document_month" 
+                               @input="editingDocument.document_month_id = getMonthIdByName(editingDocument.document_month)"
+                               placeholder="e.g., January or 1-12" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">URL</label>
                     <input type="url" 
@@ -722,7 +1012,7 @@
             </div>
             <div class="flex justify-end space-x-3 mt-6">
                 <button @click="showEditDocument = false" 
-                        class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+                        class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors cancel-button-text">
                     Cancel
                 </button>
                 <button @click="updateDocument" 
@@ -756,7 +1046,7 @@
                 </p>
                 <div class="flex justify-center space-x-3">
                     <button @click="cancelDeleteDocument()" 
-                            class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium">
+                            class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium cancel-button-text">
                         Cancel
                     </button>
                     <button @click="deleteDocumentConfirmed()" 
@@ -775,6 +1065,9 @@
                 categoriesWithDocuments: @json($categoriesWithDocuments),
                 uncategorizedDocuments: @json($uncategorizedDocuments),
                 documents: @json($documents),
+                allDocuments: @json($documents),
+                availableYears: @json($availableYears),
+                months: @json($months),
                 selectedCategory: null,
                 searchTerm: '',
                 showAddDocument: false,
@@ -785,6 +1078,20 @@
                 activeDropdown: null,
                 categoryToDelete: null,
                 documentToDelete: null,
+                sidebarOpen: true,
+                darkMode: localStorage.getItem('darkMode') === 'true', // Load from localStorage
+                loading: false, // Loading state for filters
+                addDocumentLoading: false, // Loading state for add document
+                searchLoading: false, // Loading state for search
+                searchLoadingTimer: null, // Timer for search loading delay
+                filterLoading: false, // Loading state for category/year/month filters
+                totalDocumentsCount: @json($documents->count()), // Total documents count
+                filters: {
+                    category_id: @json($filters['category_id'] ?? ''),
+                    year: @json($filters['year'] ?? ''),
+                    month: @json($filters['month'] ?? ''),
+                    search: @json($filters['search'] ?? ''),
+                },
                 newCategory: {
                     category_name: '',
                     description: '',
@@ -801,13 +1108,19 @@
                 newDocument: {
                     category_id: '',
                     document_name: '',
-                    url: ''
+                    url: '',
+                    document_year: '',
+                    document_month: '', // Store user input
+                    document_month_id: '' // Store converted ID
                 },
                 editingDocument: {
                     id: null,
                     category_id: '',
                     document_name: '',
-                    url: ''
+                    url: '',
+                    document_year: '',
+                    document_month: '', // Store user input
+                    document_month_id: '' // Store converted ID
                 },
                 selectedDocuments: [],
                 
@@ -1008,6 +1321,8 @@
                         return;
                     }
                     
+                    this.addDocumentLoading = true;
+                    
                     const category = this.categories.find(c => c.id == this.newDocument.category_id);
                     
                     try {
@@ -1018,8 +1333,12 @@
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                             },
                             body: JSON.stringify({
-                                ...this.newDocument,
-                                category_name: category.category_name
+                                category_id: this.newDocument.category_id,
+                                category_name: category.category_name,
+                                document_name: this.newDocument.document_name,
+                                url: this.newDocument.url,
+                                document_year: this.newDocument.document_year,
+                                document_month_id: this.newDocument.document_month_id
                             })
                         });
                         
@@ -1030,17 +1349,25 @@
                             return;
                         }
                         
-                        const newDocument = await response.json();
-                        this.documents.push({
-                            ...newDocument,
-                            category_name: category.category_name
-                        });
+                        const newDoc = await response.json();
+                        this.documents.unshift(newDoc);
+                        this.allDocuments.unshift(newDoc);
+                        this.totalDocumentsCount++;
+                        
+                        // Update category counts
+                        const categoryIndex = this.categoriesWithDocuments.findIndex(c => c.id == category.id);
+                        if (categoryIndex !== -1) {
+                            this.categoriesWithDocuments[categoryIndex].documents_count++;
+                        }
+                        
                         this.resetNewDocument();
                         this.showAddDocument = false;
                         this.showToast('Document added successfully', 'success');
                     } catch (error) {
                         console.error('Error adding document:', error);
                         this.showToast('Error adding document', 'error');
+                    } finally {
+                        this.addDocumentLoading = false;
                     }
                 },
                 
@@ -1049,7 +1376,10 @@
                         id: document.id,
                         category_id: document.category_id || (document.category ? document.category.id : ''),
                         document_name: document.document_name,
-                        url: document.url
+                        url: document.url,
+                        document_year: document.document_year || '',
+                        document_month_id: document.document_month_id || '',
+                        document_month: this.getMonthNameById(document.document_month_id) // Show month name for editing
                     };
                     this.showEditDocument = true;
                 },
@@ -1067,7 +1397,13 @@
                                 'Content-Type': 'application/json',
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                             },
-                            body: JSON.stringify(this.editingDocument)
+                            body: JSON.stringify({
+                                category_id: this.editingDocument.category_id,
+                                document_name: this.editingDocument.document_name,
+                                url: this.editingDocument.url,
+                                document_year: this.editingDocument.document_year,
+                                document_month_id: this.editingDocument.document_month_id
+                            })
                         });
                         
                         if (!response.ok) {
@@ -1143,7 +1479,10 @@
                     this.newDocument = {
                         category_id: '',
                         document_name: '',
-                        url: ''
+                        url: '',
+                        document_year: '',
+                        document_month: '', // Store user input
+                        document_month_id: '' // Store converted ID
                     };
                 },
                 
@@ -1157,8 +1496,14 @@
                 },
                 
                 toggleDarkMode() {
-                    document.body.classList.toggle('dark');
-                    // No alert/notification - just toggle silently
+                    this.darkMode = !this.darkMode;
+                    if (this.darkMode) {
+                        document.body.classList.add('dark');
+                    } else {
+                        document.body.classList.remove('dark');
+                    }
+                    // Save to localStorage
+                    localStorage.setItem('darkMode', this.darkMode.toString());
                 },
                 
                 getCategoryColor(categoryName) {
@@ -1213,6 +1558,202 @@
                             }, 1000);
                         }
                     }, 5000);
+                },
+                
+                toggleSidebar() {
+                    this.sidebarOpen = !this.sidebarOpen;
+                },
+                
+                // Filter methods
+                handleFilterChange() {
+                    this.filterLoading = true;
+                    this.applyFilters();
+                },
+                
+                handleSearchInput() {
+                    // Clear any existing search loading timer
+                    if (this.searchLoadingTimer) {
+                        clearTimeout(this.searchLoadingTimer);
+                        this.searchLoadingTimer = null;
+                    }
+                    
+                    // Check if this is a search-only filter change
+                    const isSearchOnly = this.filters.search && 
+                        !this.filters.category_id && 
+                        !this.filters.year && 
+                        !this.filters.month;
+                    
+                    if (isSearchOnly) {
+                        // Set a timer to show loading after 2 seconds for search
+                        this.searchLoadingTimer = setTimeout(() => {
+                            this.searchLoading = true;
+                        }, 2000);
+                    } else {
+                        // Show loading immediately for other filters
+                        this.loading = true;
+                    }
+                    
+                    this.applyFilters();
+                },
+                
+                handleSearchEnter() {
+                    // Clear any existing timer and show loading immediately
+                    if (this.searchLoadingTimer) {
+                        clearTimeout(this.searchLoadingTimer);
+                        this.searchLoadingTimer = null;
+                    }
+                    this.searchLoading = true;
+                    this.applyFilters();
+                },
+                
+                async applyFilters() {
+                    try {
+                        const params = new URLSearchParams();
+                        
+                        if (this.filters.category_id) params.append('category_id', this.filters.category_id);
+                        if (this.filters.year) params.append('year', this.filters.year);
+                        if (this.filters.month) params.append('month', this.filters.month);
+                        if (this.filters.search) params.append('search', this.filters.search);
+                        
+                        const response = await fetch(`?${params.toString()}`, {
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        });
+                        
+                        if (response.ok) {
+                            const data = await response.json();
+                            this.documents = data.documents;
+                            this.totalDocumentsCount = data.totalDocuments; // Update total count
+                            this.categoriesWithDocuments = data.categoriesWithDocuments;
+                            this.uncategorizedDocuments = data.uncategorizedDocuments;
+                            
+                            // Update URL without page refresh
+                            const url = params.toString() ? `?${params.toString()}` : window.location.pathname;
+                            window.history.pushState({}, '', url);
+                        } else {
+                            // Fallback to page refresh if AJAX fails
+                            const url = params.toString() ? `?${params.toString()}` : window.location.pathname;
+                            window.location.href = url;
+                        }
+                    } catch (error) {
+                        console.error('Filter error:', error);
+                        // Fallback to page refresh on error
+                        const params = new URLSearchParams();
+                        if (this.filters.category_id) params.append('category_id', this.filters.category_id);
+                        if (this.filters.year) params.append('year', this.filters.year);
+                        if (this.filters.month) params.append('month', this.filters.month);
+                        if (this.filters.search) params.append('search', this.filters.search);
+                        const url = params.toString() ? `?${params.toString()}` : window.location.pathname;
+                        window.location.href = url;
+                    } finally {
+                        // Clear search loading timer and states
+                        if (this.searchLoadingTimer) {
+                            clearTimeout(this.searchLoadingTimer);
+                            this.searchLoadingTimer = null;
+                        }
+                        this.loading = false;
+                        this.searchLoading = false;
+                        this.filterLoading = false;
+                    }
+                },
+                
+                clearFilters() {
+                    this.filters = {
+                        category_id: '',
+                        year: '',
+                        month: '',
+                        search: ''
+                    };
+                    this.applyFilters();
+                },
+                
+                removeFilter(filterKey) {
+                    this.filters[filterKey] = '';
+                    this.applyFilters();
+                },
+                
+                hasActiveFilters() {
+                    return Object.values(this.filters).some(value => value !== '');
+                },
+                
+                getActiveFilters() {
+                    return Object.fromEntries(
+                        Object.entries(this.filters).filter(([key, value]) => value !== '')
+                    );
+                },
+                
+                getFilterLabel(key) {
+                    const labels = {
+                        category_id: 'Category',
+                        year: 'Year',
+                        month: 'Month',
+                        search: 'Search'
+                    };
+                    return labels[key] || key;
+                },
+                
+                getFilterValue(key, value) {
+                    if (key === 'category_id') {
+                        const category = this.categories.find(c => c.id == value);
+                        return category ? category.category_name : value;
+                    } else if (key === 'month') {
+                        const months = ['', 'January', 'February', 'March', 'April', 'May', 'June', 
+                                       'July', 'August', 'September', 'October', 'November', 'December'];
+                        return months[value] || value;
+                    }
+                    return value;
+                },
+                
+                formatDocumentDate(dateString) {
+                    return 'N/A'; // No longer needed since we removed date field
+                },
+                
+                formatMonth(monthNumber) {
+                    if (!monthNumber) return 'N/A';
+                    const months = ['', 'January', 'February', 'March', 'April', 'May', 'June', 
+                                   'July', 'August', 'September', 'October', 'November', 'December'];
+                    return months[monthNumber] || 'N/A';
+                },
+                
+                // Helper function to convert month name or number to ID
+                getMonthIdByName(monthInput) {
+                    if (!monthInput) return '';
+                    
+                    const trimmedInput = monthInput.toString().trim();
+                    
+                    // If it's a number, find month by month_number
+                    if (!isNaN(trimmedInput)) {
+                        const monthNum = parseInt(trimmedInput);
+                        if (monthNum >= 1 && monthNum <= 12) {
+                            const month = this.months.find(m => m.month_number === monthNum);
+                            return month ? month.id : '';
+                        }
+                    }
+                    
+                    // If it's a name, find month by name (case-insensitive)
+                    const month = this.months.find(m => 
+                        m.name.toLowerCase() === trimmedInput.toLowerCase()
+                    );
+                    
+                    return month ? month.id : '';
+                },
+                
+                // Helper function to get month name by ID
+                getMonthNameById(monthId) {
+                    if (!monthId) return 'N/A';
+                    const month = this.months.find(m => m.id == monthId);
+                    return month ? month.name : 'N/A';
+                },
+                
+                // Initialize dark mode on page load
+                init() {
+                    if (this.darkMode) {
+                        document.body.classList.add('dark');
+                    } else {
+                        document.body.classList.remove('dark');
+                    }
                 }
             }
         }
