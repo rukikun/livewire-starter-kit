@@ -85,10 +85,6 @@
                         <a href="{{ route('register') }}" class="border-2 border-white text-white px-10 py-4 rounded-full font-semibold hover:bg-white hover:text-purple-600 transition text-lg">
                             Sign Up
                         </a>
-                    @else
-                        <a href="{{ route('filetracker.index') }}" class="bg-white text-purple-600 px-10 py-4 rounded-full font-semibold hover:bg-gray-100 transition text-lg">
-                            Go to File Tracker
-                        </a>
                     @endguest
                 </div>
             </div>
