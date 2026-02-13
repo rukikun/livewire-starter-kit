@@ -1,12 +1,11 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\LandingPageController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FileTrackerController;
 
-Route::get('/', function () {
-    return view('landing');
-})->name('landing');
+Route::get('/', [LandingPageController::class, 'index'])->name('landing');
 
 Route::get('/home', function () {
     return view('welcome');
